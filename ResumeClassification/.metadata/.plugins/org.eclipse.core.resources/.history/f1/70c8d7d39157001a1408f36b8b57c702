@@ -1,0 +1,211 @@
+
+<%@page import="java.util.Set"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="com.database.ConnectionManager"%>
+<%@page import="com.helper.JobModel"%>
+<%@page import="com.helper.UserModel"%>
+<%@page import="com.helper.StudentModel"%>
+<%@page import="java.util.List"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<jsp:include page="../tiles/inc.jsp"></jsp:include>
+
+</head>
+<body>
+	<%
+		String jid = request.getParameter("jobid");
+		UserModel um = (UserModel) session.getAttribute("USER_MODEL");
+		String userId = um.getUid();
+		//	List applicantList = ConnectionManager.getAppliedCandidates(jid);
+	%>
+	<div class="wrapper">
+
+		<jsp:include page="../tiles/header.jsp"></jsp:include>
+
+		<jsp:include page="../tiles/menu.jsp"></jsp:include>
+		<div class="main-panel">
+			<div class="content">
+				<div class="container-fluid">
+					<h4 class="page-title">List Of Candidate</h4>
+					<div class="row"></div>
+					<%
+						List list1 = ConnectionManager.getAppliedCandidates(jid);
+						List list = (List) list1.get(0);
+						HashMap listMap = (HashMap) list1.get(1);
+						int i = 0;
+						if (listMap.size() > 0) {
+					%>
+					<div class="row row-card-no-pd">
+
+						<div class="col-md-12">
+							<div class="card card-tasks">
+
+								<div class="card-body ">
+									<div class="card-sub "> <h5 class="text-success">Recommended Candidates By our System</h5>  </div>
+									<table class="table table-striped table-striped-bg- mt-4">
+										<thead>
+											<tr>
+												<th scope="col">Sr. No.</th>
+												<th scope="col">Name</th>
+												<th scope="col">Contact</th>
+												<th scope="col">Email</th>
+												<th scope="col">Score</th>
+												<th scope="col">Skills</th>
+<th scope="col">Action</th>
+
+												<!-- 												<th scope="col">Action</th> -->
+											</tr>
+										</thead>
+										<tbody>
+
+											<%
+												Set<String> entry  = listMap.keySet();
+											int j = 0;
+												for (String s:entry) {
+														um = ConnectionManager.getUserDetails(s);
+														String uid = um.getUid();
+														StudentModel sm = ConnectionManager.getSkiils(uid);
+											%>
+											<tr <%=j + 1%>>
+												<td><%=j + 1%></td>
+												<td><%=um.getFname()%> <%=um.getLname()%></td>
+												<td><%=um.getPhone()%></td>
+												<td><%=um.getEmail()%></td>
+												<td>
+											<button type="button" class="btn btn-default" data-toggle="modal" data-target="#exampleModal">
+												 <img data-toggle="tooltip" title="<%=sm.getScore() %>" class="rounded-circle mx-auto d-block" height="150" width="180" src="<%=request.getContextPath()%>/tiles/ajax.jsp?methodId=showImage&pid=<%=um.getUid()%>" alt="Pi Chart image">
+												</button>
+												 </td>
+												<td><%=sm.getSkills()%></td>
+												<td><a href="<%=request.getContextPath()%>/tiles/ajax.jsp?methodId=viewFile&uid=<%=uid%>"  target="_blank">View Resume</a></td>
+												<!-- 												<td><button class="btn btn-success"> -->
+												<%-- 														<a href="<%=request.getContextPath()%>/pages/scoreCard.jsp">View --%>
+												<!-- 															Score</a> -->
+												<!-- 													</button></td> -->
+											</tr>
+
+											<%
+												j++;}
+											%>
+										</tbody>
+									</table>
+									<button class="btn btn-light float-right">
+										<a
+											href="<%=request.getContextPath()%>/pages/viewJobApplied.jsp">Back</a>
+									</button>
+								</div>
+							</div>
+						</div>
+
+
+					</div>
+					<%
+						} else {
+					%>
+					<div class="text-center">
+						<label>No Application Found that are Best suited your Requirement</label>
+					</div>
+					<%
+						}
+					%>
+					<div class="row row-card-no-pd">
+
+						<div class="col-md-12">
+							<div class="card card-tasks">
+
+								<div class="card-body ">
+									<div class="card-sub "> <h5> List of All Candidates</h5>  </div>
+									<table class="table table-striped table-striped-bg- mt-4">
+										<thead>
+											<tr>
+												<th scope="col">Sr. No.</th>
+												<th scope="col">Name</th>
+												<th scope="col">Contact</th>
+												<th scope="col">Email</th>
+												<th scope="col">Score</th>
+												<th scope="col">Skills</th>
+<th scope="col">Action</th>
+
+												<!-- 												<th scope="col">Action</th> -->
+											</tr>
+										</thead>
+										<tbody>
+
+											<%
+												if (list.size() > 0) {
+													for (i = 0; i < list.size(); i++) {
+														um = (UserModel) list.get(i);
+														String uid = um.getUid();
+														StudentModel sm = ConnectionManager.getSkiils(uid);
+											%>
+											<tr <%=i + 1%>>
+												<td><%=i + 1%></td>
+												<td><%=um.getFname()%> <%=um.getLname()%></td>
+												<td><%=um.getPhone()%></td>
+												<td><%=um.getEmail()%></td>
+												<td>
+											<button type="button" class="btn btn-default" data-toggle="modal" data-target="#exampleModal">
+												 <img data-toggle="tooltip" title="<%=sm.getScore() %>" class="rounded-circle mx-auto d-block" height="150" width="180" src="<%=request.getContextPath()%>/tiles/ajax.jsp?methodId=showImage&pid=<%=um.getUid()%>" alt="Pi Chart image">
+												</button>
+												 </td>
+												<td><%=sm.getSkills()%></td>
+												<td><a href="<%=request.getContextPath()%>/tiles/ajax.jsp?methodId=viewFile&uid=<%=uid%>"  target="_blank">View Resume</a></td>
+												<!-- 												<td><button class="btn btn-success"> -->
+												<%-- 														<a href="<%=request.getContextPath()%>/pages/scoreCard.jsp">View --%>
+												<!-- 															Score</a> -->
+												<!-- 													</button></td> -->
+											</tr>
+
+											<%
+												}
+												} else {
+											%>
+											<div class="text-center">
+												<h2>No Application Found</h2>
+											</div>
+											<%
+												}
+											%>
+										</tbody>
+									</table>
+									<button class="btn btn-light float-right">
+										<a
+											href="<%=request.getContextPath()%>/pages/viewJobApplied.jsp">Back</a>
+									</button>
+								</div>
+							</div>
+						</div>
+
+
+					</div>
+
+
+
+				</div>
+			</div>
+
+			<jsp:include page="../tiles/footer.jsp"></jsp:include>
+		</div>
+	</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="">
+      
+      <div class="modal-body">
+     <img data-toggle="tooltip" title="Pi chart For candidate Assesment " height="580px" width="720px" src="<%=request.getContextPath()%>/tiles/ajax.jsp?methodId=showImage&pid=2" alt="Pi Chart image">
+      </div>
+     
+    </div>
+  </div>
+</div>
+	<!-- Modal -->
+
+</body>
+
+<jsp:include page="../tiles/footerinc.jsp"></jsp:include>
+</html>

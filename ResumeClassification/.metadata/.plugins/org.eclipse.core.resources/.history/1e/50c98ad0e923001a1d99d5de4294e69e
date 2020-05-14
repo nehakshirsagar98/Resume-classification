@@ -1,0 +1,88 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.helper;
+
+import com.constant.ServerConstants;
+import java.net.*;
+import java.io.*;
+
+/**
+ *
+ * @author technowings
+ */
+/**
+ * This program is a socket client application that connects to a time server to
+ * get the current date time.
+ *
+ * @author www.codejava.net
+ */
+public class CallServer {
+	public static void main(String[] args) {
+		CallServer.call("1");
+	}
+
+	public static String call(String uid) {
+		try {
+			StringBuilder result = new StringBuilder();
+			URL url = new URL(ServerConstants.url + uid);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			BufferedReader rd = new BufferedReader(new InputStreamReader(
+					conn.getInputStream()));
+			String line;
+			while ((line = rd.readLine()) != null) {
+				result.append(line);
+			}
+			rd.close();
+			String data = result.toString();
+			System.out.println(data);
+			String op= data.split(";"); 
+			
+			
+			return data;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
+	public static String checkSkiils(String path) {
+		String hostname = ServerConstants.url;
+		int port = ServerConstants.port;
+		// String path =
+		// "D:\\work\\project\\PlantDiseaseDetection\\python-cnn\\training_data\\Tomato___Bacterial_spot\\b168.jpg";
+		try (Socket socket = new Socket(hostname, port)) {
+
+			OutputStream output = socket.getOutputStream();
+			byte[] data = path.getBytes();
+			output.write(data);
+
+			InputStream input = socket.getInputStream();
+			StringBuffer sb = new StringBuffer();
+			// data = new byte[1024];
+			// while(input.read()!=-1){
+			int len = input.read(data);
+			if (len != -1) {
+
+				// }C
+				System.out.println(new String(data, 0, len));
+				return (new String(data, 0, len));
+
+			} else {
+				return "unRecognized";
+			}
+
+		} catch (UnknownHostException ex) {
+
+			System.out.println("Server not found: " + ex.getMessage());
+
+		} catch (IOException ex) {
+
+			System.out.println("I/O error: " + ex.getMessage());
+		}
+		return null;
+	}
+}
